@@ -1,0 +1,14 @@
+# build & coverage
+dist
+coverage
+.angular
+node_modules
+
+# logs
+*.log
+
+# lockfiles (avoid churn)
+package-lock.json
+
+# do not format ESLint flat-config
+eslint.config.js

@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint . --ext .ts,.html --max-warnings=0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky",
@@ -15,11 +15,15 @@
     "release": "semantic-release"
   },
   "lint-staged": {
-    "*.{ts,js}": [
+    "*.{ts,tsx,js,jsx}": [
       "eslint --fix",
       "prettier --write"
     ],
-    "*.{html,scss,css,json,md}": [
+    "*.html": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss,md,json,yml,yaml}": [
       "prettier --write"
     ]
   },
@@ -47,16 +51,18 @@
     "@angular/compiler-cli": "^19.2.0",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
+    "@eslint/js": "^9.39.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/npm": "^13.1.1",
     "@semantic-release/release-notes-generator": "^14.1.0",
     "@types/jasmine": "~5.1.0",
-    "angular-eslint": "19.8.1",
+    "angular-eslint": "^19.8.1",
     "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^9.28.0",
+    "eslint": "^9.39.0",
+    "eslint-config-prettier": "^9.1.2",
     "husky": "^9.1.7",
     "jasmine-core": "~5.6.0",
     "karma": "~6.4.0",
@@ -68,6 +74,6 @@
     "prettier": "^3.6.2",
     "semantic-release": "^25.0.1",
     "typescript": "~5.7.2",
-    "typescript-eslint": "8.33.1"
+    "typescript-eslint": "^8.46.2"
   }
 }

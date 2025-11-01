@@ -2,14 +2,14 @@ name: Release
 
 on:
   workflow_run:
-    workflows: [ "CI" ]
-    branches: [ main ]
-    types: [ completed ]
+    workflows: ['CI']
+    branches: [main]
+    types: [completed]
 
 permissions:
-  contents: write       # create tags/CHANGELOG commits
-  issues: write         # comment on issues (semantic-release/github)
-  pull-requests: write  # comment on PRs (semantic-release/github)
+  contents: write # create tags/CHANGELOG commits
+  issues: write # comment on issues (semantic-release/github)
+  pull-requests: write # comment on PRs (semantic-release/github)
 
 jobs:
   semantic_release:
