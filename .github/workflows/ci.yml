@@ -2,32 +2,40 @@ name: CI
 
 on:
   pull_request:
-    branches: [main]
+    branches: [ main ]
   push:
-    branches: [main]
+    branches: [ '**' ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - run: npm ci
-      - run: npm run format:check
-      - run: npm run lint
-      - run: npm run test -- --watch=false --browsers=ChromeHeadless
 
-  release:
-    if: github.ref == 'refs/heads/main'
-    needs: verify
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - run: npm ci
-      - run: npm run release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Setup Node 22.21.1
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.21.1'
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Prettier check
+        run: npm run format:check
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: Unit tests (CI)
+        run: ng test --watch=false --browsers=ChromeHeadless
+
+      - name: Production build
+        run: ng build --configuration=production
