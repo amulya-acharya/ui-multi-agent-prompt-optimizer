@@ -1,10 +1,10 @@
-# .github/workflows/release.yml
 name: Release
+
 on:
   workflow_run:
-    workflows: ['CI'] # must match the CI workflow name exactly
+    workflows: ['CI'] # must match the CI workflow name
     types: [completed]
-    branches: [main] # only when CI ran on main
+    branches: [main] # run only when CI ran on main
 
 permissions:
   contents: write
@@ -13,13 +13,20 @@ permissions:
 
 jobs:
   semantic_release:
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.branch == 'refs/heads/main' }}
+    # Run only if upstream CI succeeded AND upstream event was a PUSH to main
+    if: >-
+      ${{
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'push' &&
+        github.event.workflow_run.head_branch == 'main'
+      }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout (full history for tags)
+      - name: Checkout exact commit from upstream run
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Setup Node 22.21.1
         uses: actions/setup-node@v4
@@ -30,8 +37,8 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      - name: Release
+      - name: Release (semantic-release)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }} # only if you publish to npm
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }} # if you publish to npm
         run: npm run release
